@@ -38,3 +38,19 @@ A typical lambda function in a Node.js server will look like below.
 ![basic lambda function](md/lambdaFunc.png)
 
 In the above syntax, ```handlerFunction``` is the name of our Lambda function. The ```event``` object contains information about the event that triggers the lambda function on execution. The ```context``` object contains information about the runtime. Rest of the code is written inside the Lambda function and at last a ```callback``` is invoked with an error object and result object. We will learn more about these objects later when are going to implement them.
+
+## Setting up AWS Lambda
+
+In order to setup a Lambda function on AWS, we need to first register an account for the access keys. Use your credentials to login or signup a new account on console.amazon.com and once you are through the verification process you will be welcomed by the following screen.
+
+![aws services](md/awsConsole.png)
+
+To get the keys and permissions in order to deploy a function, we have to switch to Identity and Access Management (IAM). Then go to ```Users``` tab from the left hand sidebar and click on the button ```Add user```. Fill in the details in the below form and do enable ```Access Type > Programmatic Access```.
+
+![add user](md/addUser.png)
+
+Then on the next page, select ```Attach Existing Policies Directly``` and then select a policy name ```AdministratorAccess```.
+
+![admin access](md/adminAccess.png)
+
+Click ```Next: Review``` button and then click ```Create User``` button when displayed. Proceeding to the next step you will see the user was created. Now, and only now, will you have access to the users Access Key ID and Secret Access Key. This information is unique for every user you create.
