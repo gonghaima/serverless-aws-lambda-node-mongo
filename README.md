@@ -19,3 +19,22 @@ Common FaaS service platform providers are:
 - Apache OpenWhisk
 
 In the following tutorial, we are going to create a demo to deploy on a serverless infrastructure provider such as AWS Lambda.
+
+## What is AWS Lambda
+
+In order to build and deploy a backend function to handle a certain operation, I am going to start with setting up the service provider you are going to use to follow this article. AWS Lambda supports different runtimes such as Node.js, Java, Python, .NET Core and Go for you to execute a function.
+The function runs inside a container with a 64-bit Amazon Linux AMI. You might be thinking, ‘why I am telling you all of this?’ Well, using serverless for the first time can be a bit overwhelming and if you know what you are getting in return, that’s always good! More geeky stuff is listed below.
+
+- Memory: 128MB — 3008MB
+- Ephemeral disk space: 512MB
+- Max execution duration: 300 seconds
+- Compressed package size: 50MB
+- Uncompressed package size: 250MB
+
+The execution duration here means that your Lambda function can only run a maximum of 5 minutes. This does mean that it is not meant for running longer processes. The disk space is the form of a temporary storage. The package size refers to the code necessary to trigger the server function. In case of Node.js, this does mean that any dependencies that are being imported into our server (for example, node_modules/ directory).
+
+A typical lambda function in a Node.js server will look like below.
+
+![basic lambda function](md/lambdaFunc.png)
+
+In the above syntax, ```handlerFunction``` is the name of our Lambda function. The ```event``` object contains information about the event that triggers the lambda function on execution. The ```context``` object contains information about the runtime. Rest of the code is written inside the Lambda function and at last a ```callback``` is invoked with an error object and result object. We will learn more about these objects later when are going to implement them.
