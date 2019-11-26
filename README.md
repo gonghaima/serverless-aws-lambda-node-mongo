@@ -147,4 +147,13 @@ functions:
 
  ```
 
- 
+## REST API with Serverless Stack
+
+In this part of the tutorial, I will show you how to **hook up a MongoDB database as a service to a Serverless REST API**. We are going to need three things that will complete our tech stack. They are:
+
+- AWS Lambda
+- Node.js
+- MongoDB Atlas
+
+We already have the first two, all we need is to setup a MongoDB cloud database called Atlas. MongoDB Atlas is a database as a service developed by the team behind the MongoDB itself. Along with providing a free/paid tier for storing your data on the cloud, MongoDB Atlas provides a lot of analytics that is essential to manage and monitor your application. MongoDB Atlas does provide a free tier that we will be using with our serverless stack.
+
