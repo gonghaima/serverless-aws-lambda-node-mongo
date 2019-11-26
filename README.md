@@ -136,7 +136,7 @@ The output will look like below.
 
 Take a look at the configuration in serverless.yml.
 
-```yammel
+```javascript
 service: aws-nodejs
 provider:
   name: aws
@@ -144,4 +144,7 @@ provider:
 functions:
   hello:
     handler: handler.hello
-```
+
+ ```
+
+ 
