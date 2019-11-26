@@ -157,3 +157,27 @@ In this part of the tutorial, I will show you how to **hook up a MongoDB databas
 
 We already have the first two, all we need is to setup a MongoDB cloud database called Atlas. MongoDB Atlas is a database as a service developed by the team behind the MongoDB itself. Along with providing a free/paid tier for storing your data on the cloud, MongoDB Atlas provides a lot of analytics that is essential to manage and monitor your application. MongoDB Atlas does provide a free tier that we will be using with our serverless stack.
 
+## Creating a database on MongoDB Atlas
+
+We will start by creating a database on the MongoDB Atlas. Login to the site and create an account if you do not have it already. We just need a sandbox environment to get hands-on experience so we must opt for free tier. Once you have your account set up, open up your account page and add a new organization.
+
+![atlas setup](md/atlasSignup.png)
+
+Now, after entering the name, proceed further and click on Create Organization.
+
+![atlas organization](md/atlasOrganization.png)
+
+You will be then prompted to the main screen where you can create a new project. Type in the name of your project and proceed further.
+
+![atlas new project](md/atlasNewProject.png)
+
+MongoDB Atlas is secured by default. You need to set permissions before we leverage its usage in our app. You can name the database at the pointed field below.
+
+![atlas project name](md/atlasProjectName.png)
+
+Now, we can add our free sandbox to this project. It is called a cluster.
+
+![atlas free sandbox](md/atlasFreeSandbox.png)
+
+After all that, just add an admin user for the cluster and give him a really strong password. As you can see the price for this cluster will be ```$0.00``` forever. Your cluster will take a few minutes to deploy. While that is underway, let us finally start writing some code.
+
