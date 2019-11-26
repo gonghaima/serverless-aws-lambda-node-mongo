@@ -246,3 +246,140 @@ functions:
 The CRUD operations that will handle the functionalities of the REST API are going to be in the file ```handler.js```. Each event contains the event information of the current event that will be invoked from the ```handler.js```. In the above configuration file, we have defined each CRUD operation along with an event and the name. Also notice, when defining the ```events``` in above file, we are associating an HTTP request with a ```path``` that is going to be the endpoint of the CRUD operation in the API, the HTTP method and lastly, ```cors``` option.
 
 I am going to demonstrate a simple Note taking app through our REST API. These CRUD operations are going to be the core of it. Since our API is going to be hosted remotely, we have to enable Cross-Origin Resource Sharing. No need to install another dependency on that. Serverless configuration file has support for it. Just specify in the ```events``` section like ```cors: true```. By default, it is false.
+
+## Defining the Handler Functions
+
+If you are familiar with Node.js and Express framework you will notice there is little difference in creating a controller function that leads to the business logic of a route. The similar approach we are going to use to define in each handler function.
+
+```javascript
+'use strict';
+
+module.exports.hello = (event, context, callback) => {
+    console.log('Hello World');
+    callback(null, 'Hello World');
+};
+
+module.exports.create = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+
+    connectToDatabase().then(() => {
+        Note.create(JSON.parse(event.body))
+            .then(note =>
+                callback(null, {
+                    statusCode: 200,
+                    body: JSON.stringify(note)
+                })
+            )
+            .catch(err =>
+                callback(null, {
+                    statusCode: err.statusCode || 500,
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: 'Could not create the note.'
+                })
+            );
+    });
+};
+
+module.exports.getOne = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+
+    connectToDatabase().then(() => {
+        Note.findById(event.pathParameters.id)
+            .then(note =>
+                callback(null, {
+                    statusCode: 200,
+                    body: JSON.stringify(note)
+                })
+            )
+            .catch(err =>
+                callback(null, {
+                    statusCode: err.statusCode || 500,
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: 'Could not fetch the note.'
+                })
+            );
+    });
+};
+
+module.exports.getAll = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+
+    connectToDatabase().then(() => {
+        Note.find()
+            .then(notes =>
+                callback(null, {
+                    statusCode: 200,
+                    body: JSON.stringify(notes)
+                })
+            )
+            .catch(err =>
+                callback(null, {
+                    statusCode: err.statusCode || 500,
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: 'Could not fetch the notes.'
+                })
+            );
+    });
+};
+
+module.exports.update = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+
+    connectToDatabase().then(() => {
+        Note.findByIdAndUpdate(event.pathParameters.id, JSON.parse(event.body), {
+                new: true
+            })
+            .then(note =>
+                callback(null, {
+                    statusCode: 200,
+                    body: JSON.stringify(note)
+                })
+            )
+            .catch(err =>
+                callback(null, {
+                    statusCode: err.statusCode || 500,
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: 'Could not fetch the notes.'
+                })
+            );
+    });
+};
+
+module.exports.delete = (event, context, callback) => {
+    context.callbackWaitsForEmptyEventLoop = false;
+
+    connectToDatabase().then(() => {
+        Note.findByIdAndRemove(event.pathParameters.id)
+            .then(note =>
+                callback(null, {
+                    statusCode: 200,
+                    body: JSON.stringify({
+                        message: 'Removed note with id: ' + note._id,
+                        note: note
+                    })
+                })
+            )
+            .catch(err =>
+                callback(null, {
+                    statusCode: err.statusCode || 500,
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: 'Could not fetch the notes.'
+                })
+            );
+    });
+};
+```
+
+The context contains all the information about the handler function. How long it has been running, how much memory it is consuming among other things. In above, every function has the same value of ```context.callbackWaitsForEmptyEventLoop``` set to false and starts with ```connectToDatabase``` function call. The context object property ```callbackWaitsForEmptyEventLoop``` value is by default set to true. This property is used to modify the behavior of a callback.
+
+By default, the callback will wait until the event loop is empty before freezing the process and returning the results to the invoked function. By setting this property’s value to false, it requests the AWS Lambda to freeze the process after the callback is called, even if there are events in the event loop. You can read more about this context property at the official Lambda Documentation.
