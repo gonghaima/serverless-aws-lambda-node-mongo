@@ -448,3 +448,18 @@ Replace the user and password field with your credentials. Now to make it work, 
 
 ```require('dotenv').config({ path: './variables.env' });```
 
+## Deployment
+
+All you have to do is run the deploy command from the terminal.
+
+```sls deploy```
+
+Since we have connected our Lambda function, this command will prompt us with a different endpoints. Each handler function is deployed as a separate REST endpoint.
+
+![deployment console](md/deploymentConsole.png)
+
+You can test your API using CURL command from the terminal like below.
+
+```curl -X POST https://7w3e8tfao0.execute-api.us-east-1.amazonaws.com/dev/notes --data '{"title": "My First Note", "description": "This is a note."}'```
+
+[Complete code](https://github.com/amandeepmittal/aws-serverless-demo)
