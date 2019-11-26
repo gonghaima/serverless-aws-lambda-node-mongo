@@ -429,3 +429,22 @@ Now import this model inside handler.js for our callbacks at the top of the file
 ```javascript
 const Note = require('./notes.model.js');
 ```
+
+## Using Dotenv and Environment Variables
+
+Protecting our keys and other essentials is the first step to a secured backend application. Create a new file called variables.env. In this file, we will add our MONGODB connection URL that we have already used in ```db.js``` as a ```process.env.DB```. The good thing about environment variables is that they are global to the scope of the application.
+
+To find out our MongoDB URL, we need to go back to the mongodb atlas, to out previously created cluster. Click the button ```Connect``` and then you will be prompted a page where you can choose how to access the application. Click ```Allow Access From Anywhere```.
+
+![connect to cluster](md/connectToCluster.png)
+
+![connect application](md/connectApplication.png)
+
+Copy the mongodb URL from above and paste it in the ```variables.env``` file.
+
+```DB=mongodb://<user>:<password>@cluster0-shard-00-00-e9ai4.mongodb.net:27017,cluster0-shard-00-01-e9ai4.mongodb.net:27017,cluster0-shard-00-02-e9ai4.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin```
+
+Replace the user and password field with your credentials. Now to make it work, all we have to add the following line in our ```handler.js```.
+
+```require('dotenv').config({ path: './variables.env' });```
+
