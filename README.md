@@ -181,3 +181,68 @@ Now, we can add our free sandbox to this project. It is called a cluster.
 
 After all that, just add an admin user for the cluster and give him a really strong password. As you can see the price for this cluster will be ```$0.00``` forever. Your cluster will take a few minutes to deploy. While that is underway, let us finally start writing some code.
 
+## Building the API
+
+Next, we install all the necessary dependencies in order to create the API.
+
+```shell
+init -y
+npm i --save mongoose dotenv
+```
+
+After that, we configure the ```serverless.yml``` and add the other handler functions that we need to deploy.
+
+```yamel
+service: aws-nodejs
+provider:
+  name: aws
+  runtime: nodejs8.10
+functions:
+  hello:
+    handler: handler.hello
+  create:
+    handler: handler.create
+    events:
+      -
+        http:
+          path: notes
+          method: post
+          cors: true
+  getOne:
+    handler: handler.getOne
+    events:
+      -
+        http:
+          path: 'notes/{id}'
+          method: get
+          cors: true
+  getAll:
+    handler: handler.getAll
+    events:
+      -
+        http:
+          path: notes
+          method: get
+          cors: true
+  update:
+    handler: handler.update
+    events:
+      -
+        http:
+          path: 'notes/{id}'
+          method: put
+          cors: true
+  delete:
+    handler: handler.delete
+    events:
+      -
+        http:
+          path: 'notes/{id}'
+          method: delete
+          cors: true
+
+```
+
+The CRUD operations that will handle the functionalities of the REST API are going to be in the file ```handler.js```. Each event contains the event information of the current event that will be invoked from the ```handler.js```. In the above configuration file, we have defined each CRUD operation along with an event and the name. Also notice, when defining the ```events``` in above file, we are associating an HTTP request with a ```path``` that is going to be the endpoint of the CRUD operation in the API, the HTTP method and lastly, ```cors``` option.
+
+I am going to demonstrate a simple Note taking app through our REST API. These CRUD operations are going to be the core of it. Since our API is going to be hosted remotely, we have to enable Cross-Origin Resource Sharing. No need to install another dependency on that. Serverless configuration file has support for it. Just specify in the ```events``` section like ```cors: true```. By default, it is false.
