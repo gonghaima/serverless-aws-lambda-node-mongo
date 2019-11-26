@@ -383,3 +383,49 @@ module.exports.delete = (event, context, callback) => {
 The context contains all the information about the handler function. How long it has been running, how much memory it is consuming among other things. In above, every function has the same value of ```context.callbackWaitsForEmptyEventLoop``` set to false and starts with ```connectToDatabase``` function call. The context object property ```callbackWaitsForEmptyEventLoop``` value is by default set to true. This property is used to modify the behavior of a callback.
 
 By default, the callback will wait until the event loop is empty before freezing the process and returning the results to the invoked function. By setting this property’s value to false, it requests the AWS Lambda to freeze the process after the callback is called, even if there are events in the event loop. You can read more about this context property at the official Lambda Documentation.
+
+## Connecting MongoDB
+
+We need to create a connection between the database and our serverless functions in order to consume the CRUD operations in real-time. Create a new file called ```db.js``` in the root and append it with following.
+
+```javascript
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+let isConnected;
+
+module.exports = connectToDatabase = () => {
+    if (isConnected) {
+        console.log('=> using existing database connection');
+        return Promise.resolve();
+    }
+
+    console.log('=> using new database connection');
+    return mongoose.connect(process.env.DB).then(db => {
+        isConnected = db.connections[0].readyState;
+    });
+};
+```
+
+The is common Mongoose connection that you might have seen in other Nodejs apps if using MongoDB as a database. The only difference here is that we are exporting ```connectToDatabase``` to import it inside ```handler.js``` for each CRUD operation. Modify ```handler.js``` file and import it at the top.
+
+```javascript
+'use strict';
+const connectToDatabase = require('./db');
+```
+
+Next step is to define the data model we need in order for things to work. Mongoose provides this functionality too. Serverless stack is unopinionated about which ODM or ORM you use in your application. Create a new file called ```notes.model.js``` and add the following.
+
+```javascript
+const mongoose = require('mongoose');
+const NoteSchema = new mongoose.Schema({
+    title: String,
+    description: String
+});
+module.exports = mongoose.model('Note', NoteSchema);
+```
+
+Now import this model inside handler.js for our callbacks at the top of the file.
+
+```javascript
+const Note = require('./notes.model.js');
+```
