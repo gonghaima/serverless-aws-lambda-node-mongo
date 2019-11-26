@@ -54,3 +54,94 @@ Then on the next page, select ```Attach Existing Policies Directly``` and then s
 ![admin access](md/adminAccess.png)
 
 Click ```Next: Review``` button and then click ```Create User``` button when displayed. Proceeding to the next step you will see the user was created. Now, and only now, will you have access to the users Access Key ID and Secret Access Key. This information is unique for every user you create.
+
+## Creating a Serverless Function
+
+We are going to use install an npm dependency first to proceed and scaffold a new project. Open up your terminal and install the following.
+
+```npm install -g serverless```
+
+Once installed, we can run the serverless framework in the terminal by running the command:
+
+```serverless```
+
+Or use the shorthand ```sls``` for ```serverless```. This command will display all the available commands that come with the serverless framework.
+
+![serverless console](md/serverlessConsole.png)
+
+After installing the ```serverless``` dependency as a global package, you are ready to create your first function. To start, you will need to configure your AWS registered user credentials. AWS gives you a link to download access keys when creating a user.
+
+![access key / secret ](md/accessKeySecret.png)
+
+You can also visit your username and visit Security Credentials like below.
+
+![security credentials](md/securityCredentials.png)
+
+Now let us configure AWS with the serverless package.
+
+```sls config credentials --provider aws --key ACCESS_KEY --secret SECRET_KEY```
+
+If the above command runs successfully you will get a success message like below
+
+![setting up serverless in console](md/settingupserverless.png)
+
+The good thing about using ```serverless``` npm package is that it comes with pre-defined templates that you can create in your project using a command and also creates a basic configuration for us that is required to deploy our Lambda function. To get started, I am going to use ```aws-nodejs``` template inside a new directory.
+
+```sls create -t aws-nodejs -p aws-serverless-demo && cd aws-serverless-demo```
+
+The ```-p``` flag will create a new directory with name ```aws-serverless-demo```. The ```-t``` flag uses the pre-defined boilerplate. The result of this will create three new files in your project directory.
+
+- Usual .gitignore
+- handler.js where we will write our handle function
+- serverless.yml contains the configuration
+
+The default handler file looks like below.
+
+```javascript
+module.exports.hello = async (event, context) => {
+	return {
+		statusCode: 200,
+		body: JSON.stringify({
+			message: 'Go Serverless v1.0! Your function executed successfully!',
+			input: event
+		})
+	};
+};
+```
+
+In the above file, hello is the function that has two parameters: ```event```, and ```context```. ```module.exports``` is basic Nodes syntax as well as the rest of the code. You can clearly see it also supports ES6 features. An ```event``` is an object that contains all the necessary request data. The ```context``` object contains AWS-specific values. We have already discussed it before. Let us modify this function to our needs and add a third parameter called the ```callback```. Open ```handler.js``` file and edit the ```hello``` function.
+
+```javascript
+'use strict';
+
+module.exports.hello = (event, context, callback) => {
+	console.log('Hello World');
+	callback(null, 'Hello World');
+};
+```
+
+The ```callback``` function must be invoked with an ```error``` response as the first argument, in our case it is ```null``` right now or a valid response as the second argument which is currently sending a simple ```Hello World``` message. We can now deploy this handler function using the command below from your terminal window.
+
+```sls deploy```
+
+It will take a few minutes to finish the process. Our serverless function gets packed into a ```.zip``` file. Take a notice at the **Service Information** below. It contains all the information what endpoints are available, what is our function, where it is deployed and so on.
+
+![serverless deploy](md/serverlessDeploy.png)
+
+You can try the ```invoke``` attribute like following to run the function and see the result.
+
+The output will look like below.
+
+![serverless console test](md/serverlessTestConsole.png)
+
+Take a look at the configuration in serverless.yml.
+
+```yammel
+service: aws-nodejs
+provider:
+  name: aws
+  runtime: nodejs8.10
+functions:
+  hello:
+    handler: handler.hello
+```
